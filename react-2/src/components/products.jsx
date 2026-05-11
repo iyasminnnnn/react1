@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { Link } from 'react-router-dom';
 library.add(faStar);
 function Products() {
   const [data, setData] = useState(null);
@@ -15,7 +16,6 @@ function Products() {
         console.error("Error fetching data:", error);
       }
     };
-
     fetchData();
   }, []);
   function StarRating() {
@@ -28,7 +28,7 @@ function Products() {
             <button
               key={star}
               disabled={HasRated}
-              onClick={() => {
+              onClick={(e) => {
                 setRating(star);
                 setHasRated(true);
               }}
@@ -43,8 +43,10 @@ function Products() {
         </div>
         {HasRated && (
           <p
-            onClick={() => setHasRated(false)}
-            className="text-blue-900 italic font-bold text-[13px]"
+            onClick={(e) => {
+              setHasRated(false);
+            }}
+            className="text-blue-900 italic font-bold text-[13px] cursor-pointer"
           >
             Change my rate
           </p>
@@ -60,66 +62,63 @@ function Products() {
       {data ? (
         <ul className="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-2 xs:grid-cols-1 sm:grid-cols-1 gap-5 ">
           {data.products.map((product) => (
-            <div>
-              <ul className="flex flex-col gap-3.5 ">
-                <li
-                  key={product.id}
-                  className="bg-pink-100 border-2 border-blue-400"
-                >
-                  <img src={product.images[0]}></img>
-                </li>
-                <div className=" flex flex-col  bg-blue-200 h-59 gap-5 pl-2.5 pr-2.5 border-2 border-pink-300">
-                  <div className="flex justify-between pt-3 gap-3">
-                    <li key={product.id} className="font-semibold">
-                      {product.title}
-                    </li>
-                    <div>
-                      <li
-                        key={product.id}
-                        className="text-red-800 font-semibold line-through decoration-2"
-                      >
-                        {(
-                          (product.price * 100) /
-                            (100 - product.discountPercentage) +
-                          0.5
-                        ).toFixed(2)}
-                      </li>
-                      <li key={product.id} className="text-red-800 font-bold">
-                        {product.price}
-                      </li>
-                    </div>
-                  </div>
-                  <li key={product.id} className="text-[12px] italic">
-                    {product.description}
+            <div key={product.id}>
+             
+                <ul className="flex flex-col gap-3.5 ">
+                  <li className="bg-pink-100 border-2 border-blue-400">
+                    <img src={product.images[0]} alt={product.title} />
                   </li>
-                  <div className="flex gap-3.5 justify-between">
-                    <div className="flex gap-1.5 ">
-                      <li className="text-blue-900 font-bold">Rating:</li>
-                      <li key={product.id} className="font-semibold">
-                        {" "}
-                        {product.rating}
+                  <div className=" flex flex-col  bg-blue-200 h-59 gap-5 pl-2.5 pr-2.5 border-2 border-pink-300">
+                    <div className="flex justify-between pt-3 gap-3">
+                       <Link to={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <li className="font-semibold">
+                        {product.title}
                       </li>
+                             </Link>
+                      <div>
+                        <li className="text-red-800 font-semibold line-through decoration-2">
+                          {(
+                            (product.price * 100) /
+                              (100 - product.discountPercentage) +
+                            0.5
+                          ).toFixed(2)}
+                        </li>
+                        <li className="text-red-800 font-bold">
+                          {product.price}
+                        </li>
+                      </div>
                     </div>
-                    <div className="flex-col flex">
-                      <StarRating />
-                      <p
-                        class="change"
-                        className="text-blue-900 italic font-bold "
-                        style={{ display: "none" }}
-                      >
-                        Change my rate
-                      </p>
+                    <li className="text-[12px] italic">
+                      {product.description}
+                    </li>
+                    <div className="flex gap-3.5 justify-between">
+                      <div className="flex gap-1.5 ">
+                        <li className="text-blue-900 font-bold">Rating:</li>
+                        <li className="font-semibold">
+                          {product.rating}
+                        </li>
+                      </div>
+                      <div className="flex-col flex">
+                        <StarRating />
+                        <p
+                          className="text-blue-900 italic font-bold "
+                          style={{ display: "none" }}
+                        >
+                          Change my rate
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </ul>
+                </ul>
+       
             </div>
           ))}
         </ul>
       ) : (
-        <p>Loading...</p>
+        <p className="text-amber-100 italic text-[20px]">Loading...</p>
       )}
     </div>
   );
 }
+
 export default Products;
